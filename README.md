@@ -18,15 +18,51 @@
 * Player vs Computer
   - Play against the computer.
 * Choose your difficulty
-  - Choose between 3 levels of difficulty, easy, medium, and hard (being this last one configured for you to lose or tie).
+  - Choose between 3 levels of difficulty, easy, medium, or hard (being this last one configured for you to lose or tie).
 
 ## How To Use
 
-Clone this repo, install the packages, and run the project! Easy as that :)
+Clone this repo, install the requirements, and run the project! Easy as that :)
 
 ## Understanding the code
+After configuring all the user UI and sprites it was necessary to start making the required logic for the game to work properly. To achieve this objective 3 steps were followed: 
 
-1) ...
+* First: The Coordinate System
+  - A function was created which is able to read the real-time X and Y mouse position and assign a coordinate according to it. 
+  
+    ```Python
+    def check_mouse_position():
+      mouse_position = pygame.mouse.get_pos()
+      mouse_position_game = []
+  
+      mouse_x = mouse_position[0]
+      if mouse_x < 195:
+          mouse_position_game.append(120)
+      elif 205 < mouse_x < 395:
+          mouse_position_game.append(300)
+      elif 405 < mouse_x < 595:
+          mouse_position_game.append(480)
+  
+      mouse_y = mouse_position[1]
+      if mouse_y < 195:
+          mouse_position_game.append(120)
+      elif 205 < mouse_y < 395:
+          mouse_position_game.append(300)
+      elif 405 < mouse_y < 595:
+          mouse_position_game.append(480)
+  
+      return mouse_position_game
+    ```
+
+    
+    > **Note**
+    > ...
+
+* Check win, lose, or draw states:
+  - ...
+ 
+* AI brain:
+  - The AI behavior is relatively easy to understand. First, it was necessary for the AI to understand what it should do, when it should do it, and where. This might sound obvious but, AI doesn't have eyes like us... so it doesn't know which coordinate is empty, which is not, or which coordinate should it use to be able to win if needed.
 
 ## You may also like...
 
