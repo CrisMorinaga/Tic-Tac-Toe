@@ -1,3 +1,4 @@
+from collections import Counter
 import pygame
 from sys import exit
 from cpu import ComputerBrain
@@ -39,10 +40,10 @@ class X(pygame.sprite.Sprite):
 class UI(pygame.sprite.Sprite):
     """Creates the UI text elements present in the main menu"""
     def __init__(self, size: int, text: str, color: str, x_pos: int, y_pos: int, antialias=False,
-                 font: str = None, header=False, difficulty_selection=False):
+                 font: str = None, header_type=False, difficulty_selection_menu=False):
         super().__init__()
-        self.title = header
-        self.difficulty = difficulty_selection
+        self.title = header_type
+        self.difficulty = difficulty_selection_menu
         self.size = size
         self.text = text
         self.color = color
@@ -100,98 +101,88 @@ def check_mouse_position():
     return mouse_position_game
 
 
+def draw_winning_line(surface, start_pos, end_pos):
+    return pygame.draw.line(surface, 'red', start_pos, end_pos, 5)
+
+
 def check_winning_condition(group, used_pos: list):
-    horizontal_winning_possibilities = {
-        120: [],
-        300: [],
-        480: []
-    }
+    if len(used_pos) >= 5:
+        x_coordinate = Counter(form.rect.center[0] for form in group)
+        y_coordinate = Counter(form.rect.center[1] for form in group)
+        left_start_diagonal = [form for form in group if form.rect.center in [(120, 120), (300, 300), (480, 480)]]
+        right_start_diagonal = [form for form in group if form.rect.center in [(120, 480), (300, 300), (480, 120)]]
 
-    vertical_winning_possibilities = {
-        120: [],
-        300: [],
-        480: []
-    }
-    diagonal_winning_possibilities = {
-        'left_start': [],
-        'right_start': []
-    }
-    # Check if circle_group has at least 3 objects
-    if len(group) >= 3:
-        for form in group:
-            if form.rect.center[1] in horizontal_winning_possibilities:
-                horizontal_winning_possibilities[form.rect.center[1]].append(form)
-            if form.rect.center[0] in vertical_winning_possibilities:
-                vertical_winning_possibilities[form.rect.center[0]].append(form)
-            if form.rect.center in [(120, 120), (300, 300), (480, 480)]:
-                diagonal_winning_possibilities['left_start'].append(form)
-            if form.rect.center in [(120, 480), (300, 300), (480, 120)]:
-                diagonal_winning_possibilities['right_start'].append(form)
+        for y_coord, count in y_coordinate.items():
+            if count == 3:
+                horizontal_line = draw_winning_line(screen, (25, y_coord), (575, y_coord))
+                return horizontal_line
 
-        # Check for winning condition
-        if len(used_pos) >= 3:
-            for key, position in horizontal_winning_possibilities.items():
-                if len(position) >= 3:
-                    y_coord = key
-                    horizontal_line = pygame.draw.line(screen, 'red', (25, y_coord), (575, y_coord), 5)
-                    return horizontal_line
-            for key, position in vertical_winning_possibilities.items():
-                if len(position) >= 3:
-                    x_coord = key
-                    vertical_line = pygame.draw.line(screen, 'red', (x_coord, 25), (x_coord, 575), 5)
-                    return vertical_line
-            for key, position in diagonal_winning_possibilities.items():
-                if len(position) >= 3:
-                    if 'left' in key:
-                        left_to_right_diagonal_line = pygame.draw.line(screen, 'red', (25, 25), (575, 575), 5)
-                        return left_to_right_diagonal_line
-                    elif 'right' in key:
-                        right_to_left_diagonal_line = pygame.draw.line(screen, 'red', (575, 25), (25, 575), 5)
-                        return right_to_left_diagonal_line
+        for x_coord, count in x_coordinate.items():
+            if count == 3:
+                vertical_line = draw_winning_line(screen, (x_coord, 25), (x_coord, 575))
+                return vertical_line
+
+        if len(left_start_diagonal) == 3:
+            left_to_right_diagonal_line = draw_winning_line(screen, (25, 25), (575, 575))
+            return left_to_right_diagonal_line
+        elif len(right_start_diagonal) == 3:
+            right_to_left_diagonal_line = draw_winning_line(screen, (575, 25), (25, 575))
+            return right_to_left_diagonal_line
 
 
 def win_screen(render_text, color, text_size):
-    font_config = pygame.font.Font(None, text_size)
-    options_font_config = pygame.font.Font(None, 25)
+    game_over_font_config = pygame.font.Font(None, text_size)
+    restart_or_menu_font_config = pygame.font.Font(None, 25)
     # Black surface to draw the text in
-    surface = pygame.Surface((250, 100))
-    surface_rect = surface.get_rect(center=(300, 300))
-    options_surf = pygame.Surface((350, 50))
-    options_rect = options_surf.get_rect(center=(300, 400))
+    game_over_surf = pygame.Surface((250, 100))
+    game_over_surf_rect = game_over_surf.get_rect(center=(300, 300))
+
+    restart_or_menu_surf = pygame.Surface((350, 50))
+    restart_or_menu_surf_rect = restart_or_menu_surf.get_rect(center=(300, 400))
     # Calculate the center position of the surfaces
-    center_x = surface.get_width() // 2
-    center_y = surface.get_height() // 2
-    options_center_x = options_surf.get_width() // 2
-    options_center_y = options_surf.get_height() // 2
+    game_over_center_x = game_over_surf.get_width() // 2
+    game_over_center_y = game_over_surf.get_height() // 2
+
+    restart_or_menu_center_x = restart_or_menu_surf.get_width() // 2
+    restart_or_menu_center_y = restart_or_menu_surf.get_height() // 2
     # Text generation and positioning
-    text = font_config.render(render_text, False, color)
-    text_rect = text.get_rect(center=(center_x, center_y))
-    new_game_text = options_font_config.render("Press 'R' to Reset and 'M' for Main menu", True, color)
-    new_game_text_rect = new_game_text.get_rect(center=(options_center_x, options_center_y))
+    game_over_text = game_over_font_config.render(render_text, False, color)
+    game_over_text_rect = game_over_text.get_rect(center=(game_over_center_x, game_over_center_y))
+
+    restart_or_menu_text = restart_or_menu_font_config.render("Press 'R' to Reset and 'M' for Main menu", True, color)
+    restart_or_menu_text_rect = restart_or_menu_text.get_rect(center=(restart_or_menu_center_x,
+                                                                      restart_or_menu_center_y))
     # Positioning of the texts on the black surface
-    surface.blit(text, text_rect)
-    options_surf.blit(new_game_text, new_game_text_rect)
+    game_over_surf.blit(game_over_text, game_over_text_rect)
+    restart_or_menu_surf.blit(restart_or_menu_text, restart_or_menu_text_rect)
     # Positioning of the black surfaces on the screen
-    screen.blit(surface, surface_rect)
-    screen.blit(options_surf, options_rect)
+    screen.blit(game_over_surf, game_over_surf_rect)
+    screen.blit(restart_or_menu_surf, restart_or_menu_surf_rect)
     # Drawing a white border around the surfaces
-    pygame.draw.rect(screen, 'white', surface_rect, 5)
-    pygame.draw.rect(screen, 'white', options_rect, 5)
+    pygame.draw.rect(screen, 'white', game_over_surf_rect, 5)
+    pygame.draw.rect(screen, 'white', restart_or_menu_surf_rect, 5)
 
 
 # Groups
 circle_group = pygame.sprite.Group()
 x_group = pygame.sprite.Group()
 
-title = UI(100, 'Tic Tac Toe', 'white', x_pos=300, y_pos=180, header=True)
-two_players = UI(50, '2 Players', 'white', x_pos=300, y_pos=300)
-vs_cpu = UI(50, 'Against computer', 'white', x_pos=300, y_pos=400)
-easy = UI(35, 'Easy', 'white', 300, 200, difficulty_selection=True)
-medium = UI(35, 'Medium', 'white', 300, 300, difficulty_selection=True)
-hard = UI(35, 'Hard', 'white', 300, 400, difficulty_selection=True)
+title = UI(100, 'Tic Tac Toe', 'white', 300, 180, header_type=True)
+two_players = UI(50, '2 Players', 'white', 300, 300)
+vs_cpu = UI(50, 'Against computer', 'white', 300, 400)
+easy = UI(35, 'Easy', 'white', 300, 200, difficulty_selection_menu=True)
+medium = UI(35, 'Medium', 'white', 300, 300, difficulty_selection_menu=True)
+hard = UI(35, 'Hard', 'white', 300, 400, difficulty_selection_menu=True)
 
 ui_group = pygame.sprite.Group()
-ui_group.add(title, two_players, vs_cpu, easy, medium, hard)
+ui_group.add(
+    title,
+    two_players,
+    vs_cpu,
+    easy,
+    medium,
+    hard,
+)
 
 mouse = Mouse()
 mouse_group = pygame.sprite.GroupSingle()
@@ -202,7 +193,6 @@ current_turn = 1
 cpu_turn = False
 
 used_positions = []
-cpu_movement = []
 user_movement = []
 
 game_active = False
@@ -214,21 +204,10 @@ restart = False
 menu = False
 difficulty = 0
 
-# Cleaning project 'variable can be undefined' problems
+# Cleaning project 'variable can be undefined' errors
 x_win = None
 circle_win = None
 game_type = None
-
-positions = [
-    [120, 120], [300, 120], [480, 120],
-    [120, 300], [300, 300], [480, 300],
-    [120, 480], [300, 480], [480, 480]
-]
-# TODO: Add player 1 or 2 picker against computer
-# TODO: Make code if computer starts
-# TODO: Make user decide if he wants to be X or Circle?
-# TODO: Optimize and make an order with the code
-# TODO: Try getting all the 'problems' out of the code?
 
 ########################################################################################################################
 while True:
@@ -250,46 +229,49 @@ while True:
                     menu = True
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = check_mouse_position()
+            # Main menu and options
             if not game_active:
                 if game_type == 1:
+                    # Player vs player starts
                     player_vs_player = True
                     game_active = True
                 elif game_type == 2:
                     player_vs_cpu_config = True
                     if difficulty > 0:
+                        # A difficulty option is made and the game starts
                         game_active = True
                         player_vs_cpu = True
                         player_vs_cpu_config = False
-
+            # Game starts
             elif player_vs_player:
+                # Check for winning conditions, if nothing is found then the game continues
                 if x_win is None and circle_win is None:
                     if current_turn % 2 == 0:
+                        # Assigns circle to player 2
                         shape = "circle"
                     else:
+                        # Assigns X to player 1
                         shape = "x"
-                    for pos in positions:
-                        if pos not in used_positions:
-                            if check_mouse_position() == pos:
-                                used_positions.append(pos)
-                                current_turn += 1
-                                if shape == "x":
-                                    x = X(100, x_pos=pos[0], y_pos=pos[1], line_width=5)
-                                    x_group.add(x)
-                                else:
-                                    circle = Circle(75, 5)
-                                    circle.create_rect(x_pos=pos[0], y_pos=pos[1])
-                                    circle_group.add(circle)
+                    if pos not in used_positions and len(pos) > 1:
+                        used_positions.append(pos)
+                        current_turn += 1
+                        if shape == "x":
+                            x = X(100, x_pos=pos[0], y_pos=pos[1], line_width=5)
+                            x_group.add(x)
+                        else:
+                            circle = Circle(75, 5)
+                            circle.create_rect(x_pos=pos[0], y_pos=pos[1])
+                            circle_group.add(circle)
 
             elif player_vs_cpu:
                 if x_win is None and circle_win is None:
-                    for pos in positions:
-                        if pos not in used_positions:
-                            if check_mouse_position() == pos:
-                                used_positions.append(pos)
-                                user_movement.append(pos)
-                                x = X(100, x_pos=pos[0], y_pos=pos[1], line_width=5)
-                                x_group.add(x)
-                                cpu_turn = True
+                    if pos not in used_positions and len(pos) > 1:
+                        used_positions.append(pos)
+                        user_movement.append(pos)
+                        x = X(100, x_pos=pos[0], y_pos=pos[1], line_width=5)
+                        x_group.add(x)
+                        cpu_turn = True
 
     black_surface = pygame.Surface((600, 600))
     screen.blit(black_surface, (0, 0))
@@ -313,12 +295,16 @@ while True:
                 else:
                     option.update_text_color('white')
 
+    # Difficulty select menu
     if player_vs_cpu_config:
         difficulty = 0
         screen.fill('black')
         for ui in ui_group:
             if ui.difficulty:
                 screen.blit(ui.image, ui.rect)
+            if ui.difficulty and ui.title:
+                screen.blit(ui.image, ui.rect)
+                pygame.draw.rect(screen, 'white', ui.rect, 5)
 
         # Hover text color change and difficulty choosing
         for option in ui_group:
@@ -333,6 +319,7 @@ while True:
                         difficulty = 3
                 else:
                     option.update_text_color('white')
+
 # -------------------------------------------------------------------------------------------------------------------- #
     if game_active:
         screen.fill('black')
@@ -340,7 +327,6 @@ while True:
         if restart or menu:
             current_turn = 1
             used_positions = []
-            cpu_movement = []
             user_movement = []
             circle_group.empty()
             x_group.empty()
@@ -375,7 +361,7 @@ while True:
         if x_win is None and circle_win is None:
             if cpu_turn:
                 cpu = ComputerBrain(used_positions, circle_shape=Circle(75, 5),
-                                    circle_group=circle_group, own_movements=cpu_movement, user_movements=user_movement)
+                                    circle_group=circle_group, user_movements=user_movement)
                 if difficulty == 1:
                     cpu.easy()
                 elif difficulty == 2:
@@ -386,13 +372,10 @@ while True:
 
         if x_win:
             win_screen('Player 1 wins', 'white', 50)
-            cpu_turn = False
         elif circle_win:
             win_screen('Player 2 wins', 'white', 50)
-            cpu_turn = False
         elif len(used_positions) == 9 and not x_win and not circle_win:
             win_screen('Draw', 'white', 50)
-            cpu_turn = False
             tie = True
 
     mouse_group.draw(screen)
