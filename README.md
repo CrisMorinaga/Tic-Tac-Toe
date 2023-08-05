@@ -84,7 +84,7 @@ After configuring all the user UI and sprites it was necessary to start making t
                       circle_group.add(circle)
       ```
   
-* Second: Win, lose, or draw logic:
+* Second: Win, lose, or draw logic
   - Once the coordinate system is created and the used_positions array starts to become populated by coordinates, we need a way to check if the player using X or the player using Circles won. For this purpose, and knowing that a player needs to have made at least 3 movements to win, the check_winning_condition function is created.
     ```Python
     circle_group = pygame.sprite.Group()
@@ -117,7 +117,7 @@ After configuring all the user UI and sprites it was necessary to start making t
 
     With this, the base for the game is set and two users can start playing against each other. To finalize the project, an AI was created.
  
-* AI brain:
+* Third: AI brain
   - The AI behavior is relatively easy to understand. First, it was necessary for the AI to understand what it should do, when it should do it, and where. This might sound obvious but, AI doesn't have eyes like us... so it doesn't know which coordinate slot is empty, which coordinate slot is being used, or which coordinate slot should it use to be able to win if needed.
   - To avoid making this readme longer than it should I will skip this section, if you are interested please feel free to contact me!
 
