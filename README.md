@@ -124,6 +124,7 @@ After configuring all the user UI and sprites it was necessary to start making t
 ## You may also like...
 
 - [SmartBrain](https://github.com/CrisMorinaga/SmartBrain) - A website that uses Clarifai API to scan an image URL and detect faces on it.
+- [ChatRoom](https://github.com/CrisMorinaga/ChatRoom) - A chat room built using Flask-Socketio and Next js.
 
 ---
 
