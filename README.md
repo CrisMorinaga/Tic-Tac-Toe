@@ -118,7 +118,7 @@ After configuring all the user UI and sprites it was necessary to start making t
     With this, the base for the game is set and two users can start playing against each other. To finalize the project, an AI was created.
  
 * Third: AI brain
-  - The AI behavior is relatively easy to understand. First, it was necessary for the AI to understand what it should do, when it should do it, and where. This might sound obvious but, AI doesn't have eyes like us... so it doesn't know which coordinate slot is empty, which coordinate slot is being used, or which coordinate slot should it use to be able to win if needed.
+  - The AI behavior is relatively easy to understand. First, it was necessary for the AI to understand what it should do, when it should do it, and where. This might sound obvious but, AI doesn't have eyes like us... so it doesn't know which coordinate slot is empty, which coordinate slot is being used, or which coordinate slot should it use to be able to win if needed. So, 2D arrays (Matrices) and 3D arrays (Tensors) were created in order to save used positions and possible positions for it.
   - To avoid making this readme longer than it should I will skip this section, if you are interested please feel free to contact me!
 
 ## You may also like...
