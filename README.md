@@ -1,5 +1,5 @@
 <h2 align="center">Tic Tac Toe on Pygame with an AI that has 3 levels of difficulty.</h4>
-<h4 align="center">Game modes: Player vs Player or Player vs Computer. </h3>
+<h4 align="center">Game modes: Player vs Player or Player vs Computer. </h4>
 <p align="center">
   <img width="712" alt="Screenshot 2023-07-26 at 19 58 47" src="https://github.com/CrisMorinaga/Tic-Tac-Toe/assets/128830239/d687bb51-0ddc-4ea4-aa06-1ae9ce21309a">
 </p>
@@ -118,12 +118,13 @@ After configuring all the user UI and sprites it was necessary to start making t
     With this, the base for the game is set and two users can start playing against each other. To finalize the project, an AI was created.
  
 * Third: AI brain
-  - The AI behavior is relatively easy to understand. First, it was necessary for the AI to understand what it should do, when it should do it, and where. This might sound obvious but, AI doesn't have eyes like us... so it doesn't know which coordinate slot is empty, which coordinate slot is being used, or which coordinate slot should it use to be able to win if needed.
+  - The AI behavior is relatively easy to understand. First, it was necessary for the AI to understand what it should do, when it should do it, and where. This might sound obvious but, AI doesn't have eyes like us... so it doesn't know which coordinate slot is empty, which coordinate slot is being used, or which coordinate slot should it use to be able to win if needed. So, 2D arrays (Matrices) and 3D arrays (Tensors) were created in order to save used positions and possible positions for it.
   - To avoid making this readme longer than it should I will skip this section, if you are interested please feel free to contact me!
 
 ## You may also like...
 
 - [SmartBrain](https://github.com/CrisMorinaga/SmartBrain) - A website that uses Clarifai API to scan an image URL and detect faces on it.
+- [ChatRoom](https://github.com/CrisMorinaga/ChatRoom) - A chat room built using Flask-Socketio and Next js.
 
 ---
 
