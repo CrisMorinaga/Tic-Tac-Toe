@@ -127,5 +127,5 @@ After configuring all the user UI and sprites it was necessary to start making t
 
 ---
 
-> Linkedin [@Cristopher Morales](www.linkedin.com/in/cristopher-morales-c)
+> Linkedin [@Cristopher Morales](https://www.linkedin.com/in/morales-cristopher)
 
